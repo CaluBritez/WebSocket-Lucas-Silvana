@@ -1,17 +1,28 @@
 export const socketIo = (io) =>{
     let nickNames = [];
+    let messages = [];
 
     io.on('connection', (socket) => {
         console.log('Nuevo usuario conectado');
+
+        socket.emit('messages', messages);
     
     //Al recibir un mensaje recojemos los datos
         socket.on('enviar mensaje', (datos) =>{
         //Lo enviamos a todos los usuarios (clientes)
+
+        messages.push({
+            msg: datos,
+            nick: socket.nickname
+        })
+
+
          io.sockets.emit('nuevo mensaje', {
             msg: datos,
             nick: socket.nickname
         });
         });
+
         socket.on('nuevo usuario', (datos, callback) => {
 
             //Nos devuelve el indice si el dato existe, es decir, si ya existe el nombre de usuario:

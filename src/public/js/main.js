@@ -1,6 +1,8 @@
 $(function(){
     const socket = io();
     var nick = '';
+    var mensajes = [];
+    var mensaje ='';
 
 //Obtenemos los elementos del DOM
     
@@ -26,20 +28,44 @@ $(function(){
     });
 
 //Obtenemos respuesta del servidor:
+
+    socket.on('messages', (datos) => {
+        console.log('datos')
+        console.log(datos)
+        if (datos.length != 0) {
+            datos.map(data => {
+                addMessage(data)
+            });
+        }
+
+    })
     socket.on('nuevo mensaje', function(datos){
         
+            addMessage(datos)
+        /*
+        for(i=0;i<mensajes.length;i++){
+            chat.append(mensajes[i]);
+        }*/
+
+        //chat.append(mensaje);
+
+    });
+
+    const addMessage = (datos) => {
         let color = '#f5f4f4';
         if(nick == datos.nick){
             color = '#9ff4c5';
         }
-        chat.append(`
+
+        mensaje = `
         <div class="msg-area mb-2" style="background-color:${color}">
             <p class="msg"><b>${datos.nick} :</b> ${datos.msg}</p>
         </div>
-        `);
+        `;
 
-    });
-
+        mensajes.push(mensaje);
+        chat.append(mensajes[mensajes.length-1]);
+    }
     nickForm.submit( e =>{
         e.preventDefault();
         console.log('Enviando...');
